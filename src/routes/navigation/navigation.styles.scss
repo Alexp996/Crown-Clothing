@@ -1,0 +1,31 @@
+.navigation {
+  height: 70px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+
+  .logo-container {
+    height: 100%;
+    width: 70px;
+    padding: 25px;
+  }
+
+  .nav-links-container {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .nav-link {
+      margin: 10px 15px;
+      cursor: pointer;
+      text-decoration: none;
+      color: rgb(63, 62, 62);
+    }
+    .nav-link:visited, .nav-link:active{
+      color: rgb(63, 62, 62);
+    }
+  }
+}
