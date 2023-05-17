@@ -1,19 +1,23 @@
 import {useState} from 'react'
 import FormInput from '../form-input/form-input.component'
-import './sign-up.styles.scss'
+import './sign-in.styles.scss'
 import Button from '../button/button.component'
-import {createAuthUserWithEmailAndPassword, createUserDocumentFromAuth} from '../../utils/firebase/firebase.utils'
+import {signInWithPopupGoogle,createUserDocumentFromAuth, signInAuthUserWithEmailAndPassword } from '../../utils/firebase/firebase.utils'
+
+
+
+
+
+
 const defaultFormFields = {
-  displayName: '',
-  email: '',
   password: '',
-  confirmPassword: '',
+  email: '',
 }
 
 
-const SignUp = () =>{
+const SignInForm = () =>{
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const {displayName, email, password, confirmPassword} = formFields;
+  const { email, password} = formFields;
 
   
   const onChangeHandler = (e) =>{
@@ -25,35 +29,35 @@ const resetFormFields = () =>{
 }
 const onSubmitHandler = async(event)=>{
     event.preventDefault();
-  if(password !== confirmPassword) {
-    alert("Password don't match!")
-    return
-  }try{
-    const {user} = await createAuthUserWithEmailAndPassword(email, password)
-    await createUserDocumentFromAuth(user, {displayName})
+  try{
+    const response = await signInAuthUserWithEmailAndPassword(email, password);
+    console.log('response', response);
     resetFormFields();
   }catch(error){
-    if (error.code === 'auth/email-already-in-use') {
-      alert('Email already in use!');
-    } else {
-      console.log("Error from auth with email and password", error)
+    switch(error.code){
+      case 'auth/wrong-password':
+        alert("Wrong password")
+        break;
+      case 'auth/user-not-found':
+        alert("User not found!!") 
+        break;
+      default:
+        console.log(error)
     }
+    console.log(error);
   }
+}
+const signInWithGoogle = async()=>{
+  const {user} = await signInWithPopupGoogle();
+  await createUserDocumentFromAuth(user);
 }
 
   return (
     <div className='sign-up-container'>
-      <h2>Don't you have an account?</h2>
-      <span>Sign up with your email and password!</span>
+      <h2>Already have an account?</h2>
+      <span>Sign in with your email and password!</span>
       <form onSubmit={onSubmitHandler}>
-        <FormInput
-            label='Name'
-            type="text" 
-            required 
-            onChange={onChangeHandler}
-            name="displayName"
-            value={displayName}/>
-        
+  
         <FormInput
             label='Email'
             type="email" 
@@ -63,7 +67,7 @@ const onSubmitHandler = async(event)=>{
  *  In setFormFields({}), [name] va fi email(deoarece e.target.name = primeste numele name-ului pe care il dam noi in input), dupa cum name='email', 
  *  Iar VALUE, care reprezinta e.target.value,
  *  Acest VALUE va primi valoarea de la linia de mai jos unde avem value={email}, email fiind key din obiectul defaultFormFields.
- */
+ */ 
             name="email"
             value={email} />
           <FormInput
@@ -73,21 +77,20 @@ const onSubmitHandler = async(event)=>{
             onChange={onChangeHandler}
             name="password"
             value={password}/>
-          <FormInput
-            label='Confirm Password'
-            type="password" 
-            required 
-            onChange={onChangeHandler}
-            name="confirmPassword"
-            value={confirmPassword}/>
           <br />
-          <Button 
-            type='submit'>
-            Sign up!
-          </Button>
+          <div className="buttons-container">
+
+            <Button 
+              type='submit'>
+              Sign In!
+            </Button>
+            <Button type='button' buttonType='google' onClick={signInWithGoogle}>
+              Google Sign In!
+            </Button>
+          </div>
       </form>
     </div>
   )
 }
 
-export default SignUp;
+export default SignInForm;

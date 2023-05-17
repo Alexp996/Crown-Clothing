@@ -13,13 +13,13 @@ function Navigation() {
         </Link>
         
         <div className="nav-links-container">
-          <Link to="shop" className="nav-link">
+          <Link to="/shop" className="nav-link">
             Shop
           </Link>
           <Link to="/" className="nav-link">
             Home
           </Link>
-          <Link to="sign-in" className="nav-link">
+          <Link to="/auth" className="nav-link">
             SignIn
           </Link>
         </div>
